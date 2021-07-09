@@ -1,0 +1,92 @@
+const int A = 8; // pin numbers of the 7 seven segments
+const int B = 9;
+const int C = 4;
+const int D = 5;
+const int E = 6;
+const int F = 2;
+const int G = 3;
+
+const int btnPin = 10; // pin number of the push button
+
+bool btnPress = false;
+
+int btnPushCounter = 0; // counter for button presses
+int btnState = 0; // current state of the button
+int lastBtnState = 0; // previous state of the button
+int randomNumber = 0; // for experiment 2
+
+void setup() { // outputs
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(C, OUTPUT);
+  pinMode(D, OUTPUT);
+  pinMode(E, OUTPUT);
+  pinMode(F, OUTPUT);
+  pinMode(G, OUTPUT);
+}
+
+void loop() {
+  btnState = digitalRead(btnPin);
+
+  if(btnState != lastBtnState) { // comparing btnState to the previous state
+    if(btnState == LOW) { // if btnState changed, increment counter
+      btnPress = true;
+      
+      randomNumber = random(16); // generating random number between [0, 15]
+      btnPushCounter += randomNumber; // to form next hexadecimal number
+      
+      if(btnPushCounter > 15) { // can display between 0 and 15
+        btnPushCounter = btnPushCounter % 16;
+      }
+    }
+    delay(100); // to avoid bouncing
+  }
+  lastBtnState = btnState;
+
+  if(btnPress) {
+    turnOff(); // turn off the seven segment display
+    displayHexadecimalNumber(btnPushCounter);
+  }
+}
+
+void displayHexadecimalNumber(int number)
+{
+  // conditions for segment A
+  if(number!=1 && number!=4 && number!=11 && number!=13)
+  digitalWrite(A, HIGH);
+
+  // conditions for segment B
+  if(number!=5 && number!=6 && number!=11 && number!=12 && number!=14 && number!=15)
+  digitalWrite(B, HIGH);
+
+  // conditions for segment C
+  if(number!=2 && number!=12 && number!=14 && number!=15)
+  digitalWrite(C, HIGH);
+
+  // conditions for segment D
+  if(number!=1 && number!=4 && number!=7 && number!=10 && number!=15)
+  digitalWrite(D, HIGH);
+
+  // conditions for segment E
+  if(number!=1 && number!=3 && number!=4 && number!=5 && number!=7 && number!=9)
+  digitalWrite(E, HIGH);
+
+  // conditions for segment F
+  if(number!=1 && number!=2 && number!=3 && number!=7 && number!=13)
+  digitalWrite(F, HIGH);
+
+  // conditions for segment G
+  if(number!=0 && number!=1 && number!=7 && number!=12)
+  digitalWrite(G, HIGH);
+}
+
+void turnOff()
+{
+  digitalWrite(A, LOW);
+  digitalWrite(B, LOW);
+  digitalWrite(C, LOW);
+  digitalWrite(D, LOW);
+  digitalWrite(E, LOW);
+  digitalWrite(F, LOW);
+  digitalWrite(G, LOW);
+}
